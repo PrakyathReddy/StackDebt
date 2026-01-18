@@ -1,0 +1,267 @@
+import React, { useRef, useCallback, useState } from 'react';
+import { AnalysisResponse, Component, ShareCardConfig, BrandingConfig } from '../../types';
+import { Button } from '../UI';
+
+interface ShareReportProps {
+  result: AnalysisResponse;
+  onClose: () => void;
+}
+
+type ShareFormat = 'twitter' | 'linkedin' | 'slack';
+
+interface ShareDimensions {
+  width: number;
+  height: number;
+  name: string;
+}
+
+const SHARE_FORMATS: Record<ShareFormat, ShareDimensions> = {
+  twitter: { width: 1200, height: 675, name: 'Twitter' },
+  linkedin: { width: 1200, height: 627, name: 'LinkedIn' },
+  slack: { width: 1200, height: 630, name: 'Slack' }
+};
+
+const DEFAULT_BRANDING: BrandingConfig = {
+  primaryColor: '#10b981', // terminal-green
+  secondaryColor: '#374151', // gray-700
+  fontFamily: 'monospace'
+};
+
+const ShareReport: React.FC<ShareReportProps> = ({ result, onClose }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [selectedFormat, setSelectedFormat] = useState<ShareFormat>('twitter');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const { stackAgeResult, components } = result;
+
+  // Get top risk components for the share card
+  const getTopRiskComponents = useCallback((components: Component[], limit: number = 3): Component[] => {
+    return components
+      .filter(c => c.riskLevel === 'critical' || c.riskLevel === 'warning')
+      .sort((a, b) => {
+        // Sort by risk level first (critical > warning), then by age
+        if (a.riskLevel !== b.riskLevel) {
+          return a.riskLevel === 'critical' ? -1 : 1;
+        }
+        return b.ageYears - a.ageYears;
+      })
+      .slice(0, limit);
+  }, []);
+
+  const generateShareCard = useCallback(async (format: ShareFormat): Promise<string> => {
+    const canvas = canvasRef.current;
+    if (!canvas) throw new Error('Canvas not available');
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas context not available');
+
+    const dimensions = SHARE_FORMATS[format];
+    canvas.width = dimensions.width;
+    canvas.height = dimensions.height;
+
+    // Clear canvas with dark background
+    ctx.fillStyle = '#111827'; // gray-900
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Set up fonts and colors
+    const primaryColor = DEFAULT_BRANDING.primaryColor;
+    const secondaryColor = '#9ca3af'; // gray-400
+    const textColor = '#f9fafb'; // gray-50
+
+    // Title
+    ctx.fillStyle = primaryColor;
+    ctx.font = 'bold 48px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('StackDebt Analysis', canvas.width / 2, 80);
+
+    // Stack Age - Main metric
+    ctx.fillStyle = '#fbbf24'; // amber-400
+    ctx.font = 'bold 72px monospace';
+    ctx.fillText(`${stackAgeResult.effectiveAge.toFixed(1)} years`, canvas.width / 2, 180);
+
+    ctx.fillStyle = secondaryColor;
+    ctx.font = '24px monospace';
+    ctx.fillText('Effective Infrastructure Age', canvas.width / 2, 220);
+
+    // Risk summary
+    const riskY = 280;
+    const riskSpacing = 120;
+    const startX = (canvas.width - (riskSpacing * 2)) / 2;
+
+    // Critical
+    ctx.fillStyle = '#ef4444'; // red-500
+    ctx.font = 'bold 36px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(stackAgeResult.riskDistribution.critical.toString(), startX, riskY);
+    ctx.fillStyle = secondaryColor;
+    ctx.font = '18px monospace';
+    ctx.fillText('Critical', startX, riskY + 30);
+
+    // Warning
+    ctx.fillStyle = '#f59e0b'; // amber-500
+    ctx.font = 'bold 36px monospace';
+    ctx.fillText(stackAgeResult.riskDistribution.warning.toString(), startX + riskSpacing, riskY);
+    ctx.fillStyle = secondaryColor;
+    ctx.font = '18px monospace';
+    ctx.fillText('Warning', startX + riskSpacing, riskY + 30);
+
+    // OK
+    ctx.fillStyle = '#10b981'; // emerald-500
+    ctx.font = 'bold 36px monospace';
+    ctx.fillText(stackAgeResult.riskDistribution.ok.toString(), startX + (riskSpacing * 2), riskY);
+    ctx.fillStyle = secondaryColor;
+    ctx.font = '18px monospace';
+    ctx.fillText('OK', startX + (riskSpacing * 2), riskY + 30);
+
+    // Top risk components
+    const topRisks = getTopRiskComponents(components, 3);
+    if (topRisks.length > 0) {
+      ctx.fillStyle = textColor;
+      ctx.font = 'bold 24px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText('Top Risk Components:', 60, 380);
+
+      topRisks.forEach((component, index) => {
+        const y = 420 + (index * 40);
+        const riskColor = component.riskLevel === 'critical' ? '#ef4444' : '#f59e0b';
+        
+        ctx.fillStyle = riskColor;
+        ctx.font = '20px monospace';
+        ctx.fillText(`• ${component.name} v${component.version}`, 80, y);
+        
+        ctx.fillStyle = secondaryColor;
+        ctx.font = '16px monospace';
+        ctx.fillText(`${component.ageYears.toFixed(1)} years old`, 80, y + 20);
+      });
+    }
+
+    // Branding footer
+    ctx.fillStyle = primaryColor;
+    ctx.font = 'bold 20px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Generated by StackDebt', canvas.width / 2, canvas.height - 40);
+
+    ctx.fillStyle = secondaryColor;
+    ctx.font = '16px monospace';
+    ctx.fillText('Carbon Dating for Software Infrastructure', canvas.width / 2, canvas.height - 15);
+
+    // Return data URL
+    return canvas.toDataURL('image/png', 0.9);
+  }, [stackAgeResult, components, getTopRiskComponents]);
+
+  const handleGenerateAndDownload = useCallback(async () => {
+    setIsGenerating(true);
+    try {
+      const dataUrl = await generateShareCard(selectedFormat);
+      
+      // Create download link
+      const link = document.createElement('a');
+      link.download = `stackdebt-analysis-${selectedFormat}-${Date.now()}.png`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error generating share card:', error);
+      alert('Failed to generate share card. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [generateShareCard, selectedFormat]);
+
+  const handlePreview = useCallback(async () => {
+    setIsGenerating(true);
+    try {
+      await generateShareCard(selectedFormat);
+    } catch (error) {
+      console.error('Error generating preview:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [generateShareCard, selectedFormat]);
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-gray-800 border border-green-400/30 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-terminal-green">Share Your Analysis</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-white transition-colors"
+              aria-label="Close"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Format Selection */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-terminal-green mb-3">Choose Platform Format</h3>
+            <div className="grid grid-cols-3 gap-4">
+              {Object.entries(SHARE_FORMATS).map(([format, dimensions]) => (
+                <button
+                  key={format}
+                  onClick={() => setSelectedFormat(format as ShareFormat)}
+                  className={`p-4 border rounded-lg transition-colors ${
+                    selectedFormat === format
+                      ? 'border-terminal-green bg-green-900/20 text-terminal-green'
+                      : 'border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500'
+                  }`}
+                >
+                  <div className="font-semibold">{dimensions.name}</div>
+                  <div className="text-sm text-gray-400">
+                    {dimensions.width} × {dimensions.height}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Preview Canvas */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-terminal-green mb-3">Preview</h3>
+            <div className="bg-gray-900 border border-gray-600 rounded-lg p-4 flex justify-center">
+              <canvas
+                ref={canvasRef}
+                className="max-w-full h-auto border border-gray-600 rounded"
+                style={{ maxHeight: '300px' }}
+              />
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-gray-400">
+              <p>• No authentication required</p>
+              <p>• High-quality PNG format</p>
+              <p>• Optimized for social media</p>
+            </div>
+            
+            <div className="flex space-x-3">
+              <Button
+                onClick={handlePreview}
+                variant="secondary"
+                disabled={isGenerating}
+              >
+                {isGenerating ? 'Generating...' : 'Preview'}
+              </Button>
+              <Button
+                onClick={handleGenerateAndDownload}
+                variant="primary"
+                disabled={isGenerating}
+              >
+                {isGenerating ? 'Generating...' : 'Download'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ShareReport;

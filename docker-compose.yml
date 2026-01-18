@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # Encyclopedia Database (PostgreSQL)
+  database:
+    image: postgres:15-alpine
+    container_name: stackdebt-encyclopedia
+    environment:
+      POSTGRES_DB: stackdebt_encyclopedia
+      POSTGRES_USER: stackdebt_user
+      POSTGRES_PASSWORD: stackdebt_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stackdebt_user -d stackdebt_encyclopedia"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Archeologist Backend (FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: stackdebt-archeologist
+    environment:
+      DATABASE_URL: postgresql://stackdebt_user:stackdebt_password@database:5432/stackdebt_encyclopedia
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Interrogator Frontend (React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: stackdebt-interrogator
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+
+volumes:
+  postgres_data:

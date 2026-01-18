@@ -1,0 +1,262 @@
+{
+  "update_schedules": [
+    {
+      "software_name": "Node.js",
+      "registry_type": "npm",
+      "package_name": "node",
+      "frequency_hours": 24,
+      "max_versions": 15,
+      "include_prereleases": false,
+      "category": "programming_language",
+      "priority": "high"
+    },
+    {
+      "software_name": "Python",
+      "registry_type": "pypi",
+      "package_name": "python",
+      "frequency_hours": 24,
+      "max_versions": 10,
+      "include_prereleases": false,
+      "category": "programming_language",
+      "priority": "high"
+    },
+    {
+      "software_name": "React",
+      "registry_type": "npm",
+      "package_name": "react",
+      "frequency_hours": 12,
+      "max_versions": 20,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "high"
+    },
+    {
+      "software_name": "Vue.js",
+      "registry_type": "npm",
+      "package_name": "vue",
+      "frequency_hours": 12,
+      "max_versions": 15,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "high"
+    },
+    {
+      "software_name": "Angular",
+      "registry_type": "npm",
+      "package_name": "@angular/core",
+      "frequency_hours": 12,
+      "max_versions": 15,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "high"
+    },
+    {
+      "software_name": "Django",
+      "registry_type": "pypi",
+      "package_name": "django",
+      "frequency_hours": 24,
+      "max_versions": 12,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "medium"
+    },
+    {
+      "software_name": "Flask",
+      "registry_type": "pypi",
+      "package_name": "flask",
+      "frequency_hours": 24,
+      "max_versions": 10,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "medium"
+    },
+    {
+      "software_name": "FastAPI",
+      "registry_type": "pypi",
+      "package_name": "fastapi",
+      "frequency_hours": 12,
+      "max_versions": 20,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "high"
+    },
+    {
+      "software_name": "Express",
+      "registry_type": "npm",
+      "package_name": "express",
+      "frequency_hours": 24,
+      "max_versions": 12,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "medium"
+    },
+    {
+      "software_name": "Next.js",
+      "registry_type": "npm",
+      "package_name": "next",
+      "frequency_hours": 12,
+      "max_versions": 15,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "high"
+    },
+    {
+      "software_name": "Nuxt.js",
+      "registry_type": "npm",
+      "package_name": "nuxt",
+      "frequency_hours": 24,
+      "max_versions": 10,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "medium"
+    },
+    {
+      "software_name": "Laravel",
+      "registry_type": "npm",
+      "package_name": "laravel-mix",
+      "frequency_hours": 24,
+      "max_versions": 10,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "medium"
+    },
+    {
+      "software_name": "Ruby on Rails",
+      "registry_type": "rubygems",
+      "package_name": "rails",
+      "frequency_hours": 24,
+      "max_versions": 10,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "medium"
+    },
+    {
+      "software_name": "Spring Boot",
+      "registry_type": "maven",
+      "package_name": "org.springframework.boot:spring-boot-starter",
+      "frequency_hours": 24,
+      "max_versions": 10,
+      "include_prereleases": false,
+      "category": "framework",
+      "priority": "medium"
+    },
+    {
+      "software_name": "jQuery",
+      "registry_type": "npm",
+      "package_name": "jquery",
+      "frequency_hours": 48,
+      "max_versions": 8,
+      "include_prereleases": false,
+      "category": "library",
+      "priority": "low"
+    },
+    {
+      "software_name": "Bootstrap",
+      "registry_type": "npm",
+      "package_name": "bootstrap",
+      "frequency_hours": 24,
+      "max_versions": 10,
+      "include_prereleases": false,
+      "category": "library",
+      "priority": "medium"
+    },
+    {
+      "software_name": "Tailwind CSS",
+      "registry_type": "npm",
+      "package_name": "tailwindcss",
+      "frequency_hours": 24,
+      "max_versions": 12,
+      "include_prereleases": false,
+      "category": "library",
+      "priority": "medium"
+    },
+    {
+      "software_name": "Webpack",
+      "registry_type": "npm",
+      "package_name": "webpack",
+      "frequency_hours": 24,
+      "max_versions": 10,
+      "include_prereleases": false,
+      "category": "development_tool",
+      "priority": "medium"
+    },
+    {
+      "software_name": "Vite",
+      "registry_type": "npm",
+      "package_name": "vite",
+      "frequency_hours": 12,
+      "max_versions": 15,
+      "include_prereleases": false,
+      "category": "development_tool",
+      "priority": "high"
+    },
+    {
+      "software_name": "TypeScript",
+      "registry_type": "npm",
+      "package_name": "typescript",
+      "frequency_hours": 24,
+      "max_versions": 12,
+      "include_prereleases": false,
+      "category": "programming_language",
+      "priority": "high"
+    }
+  ],
+  "global_settings": {
+    "max_concurrent_updates": 3,
+    "retry_attempts": 3,
+    "retry_delay_seconds": 60,
+    "update_timeout_seconds": 300,
+    "log_level": "INFO",
+    "enable_validation": true,
+    "validation_strict_mode": false,
+    "backup_before_update": true,
+    "notification_webhook": null,
+    "rate_limit_per_registry": {
+      "npm": 100,
+      "pypi": 50,
+      "maven": 30,
+      "nuget": 50,
+      "rubygems": 50,
+      "crates": 50
+    }
+  },
+  "monitoring": {
+    "enable_metrics": true,
+    "metrics_retention_days": 30,
+    "alert_on_failures": true,
+    "failure_threshold": 3,
+    "success_rate_threshold": 0.8
+  },
+  "registry_specific_settings": {
+    "npm": {
+      "base_url": "https://registry.npmjs.org",
+      "timeout_seconds": 30,
+      "user_agent": "StackDebt-Encyclopedia/1.0"
+    },
+    "pypi": {
+      "base_url": "https://pypi.org/pypi",
+      "timeout_seconds": 30,
+      "user_agent": "StackDebt-Encyclopedia/1.0"
+    },
+    "maven": {
+      "base_url": "https://search.maven.org/solrsearch/select",
+      "timeout_seconds": 45,
+      "user_agent": "StackDebt-Encyclopedia/1.0"
+    },
+    "nuget": {
+      "base_url": "https://api.nuget.org/v3-flatcontainer",
+      "timeout_seconds": 30,
+      "user_agent": "StackDebt-Encyclopedia/1.0"
+    },
+    "rubygems": {
+      "base_url": "https://rubygems.org/api/v1/gems",
+      "timeout_seconds": 30,
+      "user_agent": "StackDebt-Encyclopedia/1.0"
+    },
+    "crates": {
+      "base_url": "https://crates.io/api/v1/crates",
+      "timeout_seconds": 30,
+      "user_agent": "StackDebt-Encyclopedia/1.0"
+    }
+  }
+}
