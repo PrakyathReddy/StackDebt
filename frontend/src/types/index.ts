@@ -19,11 +19,11 @@ export enum RiskLevel {
 export interface Component {
   name: string;
   version: string;
-  releaseDate: string;
-  endOfLifeDate?: string;
+  release_date: string;
+  end_of_life_date?: string;
   category: ComponentCategory;
-  riskLevel: RiskLevel;
-  ageYears: number;
+  risk_level: RiskLevel;
+  age_years: number;
   weight: number;
 }
 
@@ -34,23 +34,23 @@ export interface RiskSummary {
 }
 
 export interface StackAgeResult {
-  effectiveAge: number;
-  totalComponents: number;
-  riskDistribution: RiskSummary;
-  oldestCriticalComponent?: Component;
-  roastCommentary: string;
+  effective_age: number;
+  total_components: number;
+  risk_distribution: RiskSummary;
+  oldest_critical_component?: Component;
+  roast_commentary: string;
 }
 
 export interface AnalysisRequest {
   url: string;
-  analysisType: 'website' | 'github';
+  analysis_type: 'website' | 'github';
 }
 
 export interface AnalysisResponse {
-  stackAgeResult: StackAgeResult;
+  stack_age_result: StackAgeResult;
   components: Component[];
-  analysisMetadata: Record<string, any>;
-  generatedAt: string;
+  analysis_metadata: Record<string, any>;
+  generated_at: string;
 }
 
 export interface AnalysisError {

@@ -32,18 +32,18 @@ const ShareReport: React.FC<ShareReportProps> = ({ result, onClose }) => {
   const [selectedFormat, setSelectedFormat] = useState<ShareFormat>('twitter');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const { stackAgeResult, components } = result;
+  const { stack_age_result, components } = result;
 
   // Get top risk components for the share card
   const getTopRiskComponents = useCallback((components: Component[], limit: number = 3): Component[] => {
     return components
-      .filter(c => c.riskLevel === 'critical' || c.riskLevel === 'warning')
+      .filter(c => c.risk_level === 'critical' || c.risk_level === 'warning')
       .sort((a, b) => {
         // Sort by risk level first (critical > warning), then by age
-        if (a.riskLevel !== b.riskLevel) {
-          return a.riskLevel === 'critical' ? -1 : 1;
+        if (a.risk_level !== b.risk_level) {
+          return a.risk_level === 'critical' ? -1 : 1;
         }
-        return b.ageYears - a.ageYears;
+        return b.age_years - a.age_years;
       })
       .slice(0, limit);
   }, []);
@@ -77,7 +77,7 @@ const ShareReport: React.FC<ShareReportProps> = ({ result, onClose }) => {
     // Stack Age - Main metric
     ctx.fillStyle = '#fbbf24'; // amber-400
     ctx.font = 'bold 72px monospace';
-    ctx.fillText(`${stackAgeResult.effectiveAge.toFixed(1)} years`, canvas.width / 2, 180);
+    ctx.fillText(`${stack_age_result.effective_age.toFixed(1)} years`, canvas.width / 2, 180);
 
     ctx.fillStyle = secondaryColor;
     ctx.font = '24px monospace';
@@ -92,7 +92,7 @@ const ShareReport: React.FC<ShareReportProps> = ({ result, onClose }) => {
     ctx.fillStyle = '#ef4444'; // red-500
     ctx.font = 'bold 36px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText(stackAgeResult.riskDistribution.critical.toString(), startX, riskY);
+    ctx.fillText(stack_age_result.risk_distribution.critical.toString(), startX, riskY);
     ctx.fillStyle = secondaryColor;
     ctx.font = '18px monospace';
     ctx.fillText('Critical', startX, riskY + 30);
@@ -100,7 +100,7 @@ const ShareReport: React.FC<ShareReportProps> = ({ result, onClose }) => {
     // Warning
     ctx.fillStyle = '#f59e0b'; // amber-500
     ctx.font = 'bold 36px monospace';
-    ctx.fillText(stackAgeResult.riskDistribution.warning.toString(), startX + riskSpacing, riskY);
+    ctx.fillText(stack_age_result.risk_distribution.warning.toString(), startX + riskSpacing, riskY);
     ctx.fillStyle = secondaryColor;
     ctx.font = '18px monospace';
     ctx.fillText('Warning', startX + riskSpacing, riskY + 30);
@@ -108,7 +108,7 @@ const ShareReport: React.FC<ShareReportProps> = ({ result, onClose }) => {
     // OK
     ctx.fillStyle = '#10b981'; // emerald-500
     ctx.font = 'bold 36px monospace';
-    ctx.fillText(stackAgeResult.riskDistribution.ok.toString(), startX + (riskSpacing * 2), riskY);
+    ctx.fillText(stack_age_result.risk_distribution.ok.toString(), startX + (riskSpacing * 2), riskY);
     ctx.fillStyle = secondaryColor;
     ctx.font = '18px monospace';
     ctx.fillText('OK', startX + (riskSpacing * 2), riskY + 30);
@@ -123,7 +123,7 @@ const ShareReport: React.FC<ShareReportProps> = ({ result, onClose }) => {
 
       topRisks.forEach((component, index) => {
         const y = 420 + (index * 40);
-        const riskColor = component.riskLevel === 'critical' ? '#ef4444' : '#f59e0b';
+        const riskColor = component.risk_level === 'critical' ? '#ef4444' : '#f59e0b';
         
         ctx.fillStyle = riskColor;
         ctx.font = '20px monospace';
@@ -131,7 +131,7 @@ const ShareReport: React.FC<ShareReportProps> = ({ result, onClose }) => {
         
         ctx.fillStyle = secondaryColor;
         ctx.font = '16px monospace';
-        ctx.fillText(`${component.ageYears.toFixed(1)} years old`, 80, y + 20);
+        ctx.fillText(`${component.age_years.toFixed(1)} years old`, 80, y + 20);
       });
     }
 
@@ -147,7 +147,7 @@ const ShareReport: React.FC<ShareReportProps> = ({ result, onClose }) => {
 
     // Return data URL
     return canvas.toDataURL('image/png', 0.9);
-  }, [stackAgeResult, components, getTopRiskComponents]);
+  }, [stack_age_result, components, getTopRiskComponents]);
 
   const handleGenerateAndDownload = useCallback(async () => {
     setIsGenerating(true);

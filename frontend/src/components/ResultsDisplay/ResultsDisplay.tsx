@@ -5,7 +5,7 @@ import { ShareReport } from '../ShareReport';
 import { PartialSuccessWarning } from '../PartialSuccessWarning';
 
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ result, onReset }) => {
-  const { stackAgeResult, components, analysisMetadata } = result;
+  const { stack_age_result, components, analysis_metadata } = result;
   const [showShareModal, setShowShareModal] = useState(false);
   const [showPartialWarning, setShowPartialWarning] = useState(true);
 
@@ -53,9 +53,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ result, onReset }) => {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Partial Success Warning */}
-      {analysisMetadata.partial_success && showPartialWarning && (
+      {analysis_metadata.partial_success && showPartialWarning && (
         <PartialSuccessWarning
-          metadata={analysisMetadata}
+          metadata={analysis_metadata}
           onDismiss={() => setShowPartialWarning(false)}
         />
       )}
@@ -67,19 +67,19 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ result, onReset }) => {
             Infrastructure Analysis Complete
           </h2>
           <div className="text-6xl font-mono font-bold mb-4">
-            <span className="text-terminal-amber">{stackAgeResult.effectiveAge.toFixed(1)}</span>
+            <span className="text-terminal-amber">{stack_age_result.effective_age.toFixed(1)}</span>
             <span className="text-terminal-green text-3xl ml-2">years</span>
           </div>
           <p className="text-gray-400">Effective Stack Age</p>
           
           {/* Analysis metadata summary */}
           <div className="mt-4 text-sm text-gray-500">
-            {analysisMetadata.components_detected} components analyzed
-            {analysisMetadata.components_failed > 0 && (
-              <span> • {analysisMetadata.components_failed} components failed</span>
+            {analysis_metadata.components_detected} components analyzed
+            {analysis_metadata.components_failed > 0 && (
+              <span> • {analysis_metadata.components_failed} components failed</span>
             )}
-            {analysisMetadata.analysis_duration_ms && (
-              <span> • {Math.round(analysisMetadata.analysis_duration_ms / 1000)}s analysis time</span>
+            {analysis_metadata.analysis_duration_ms && (
+              <span> • {Math.round(analysis_metadata.analysis_duration_ms / 1000)}s analysis time</span>
             )}
           </div>
         </div>
@@ -93,7 +93,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ result, onReset }) => {
             <span className="text-2xl">🚨</span>
           </div>
           <div className="text-2xl font-mono font-bold text-terminal-red">
-            {stackAgeResult.riskDistribution.critical}
+            {stack_age_result.risk_distribution.critical}
           </div>
         </div>
         
@@ -103,7 +103,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ result, onReset }) => {
             <span className="text-2xl">⚠️</span>
           </div>
           <div className="text-2xl font-mono font-bold text-terminal-amber">
-            {stackAgeResult.riskDistribution.warning}
+            {stack_age_result.risk_distribution.warning}
           </div>
         </div>
         
@@ -113,20 +113,20 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ result, onReset }) => {
             <span className="text-2xl">✅</span>
           </div>
           <div className="text-2xl font-mono font-bold text-terminal-green">
-            {stackAgeResult.riskDistribution.ok}
+            {stack_age_result.risk_distribution.ok}
           </div>
         </div>
       </div>
 
       {/* Roast Commentary */}
-      {stackAgeResult.roastCommentary && (
+      {stack_age_result.roast_commentary && (
         <div className="p-6 bg-gray-800 border border-green-400/30 rounded-lg">
           <h3 className="text-lg font-semibold text-terminal-green mb-3 flex items-center">
             <span className="mr-2">💬</span>
             Infrastructure Commentary
           </h3>
           <p className="text-gray-300 italic text-lg leading-relaxed">
-            "{stackAgeResult.roastCommentary}"
+            "{stack_age_result.roast_commentary}"
           </p>
         </div>
       )}
@@ -151,13 +151,13 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ result, onReset }) => {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3">
-                        <span className="text-lg">{getRiskIcon(component.riskLevel)}</span>
+                        <span className="text-lg">{getRiskIcon(component.risk_level)}</span>
                         <div>
                           <h5 className="font-mono font-semibold text-terminal-green">
                             {component.name}
                           </h5>
                           <p className="text-sm text-gray-400">
-                            Version {component.version} • Released {new Date(component.releaseDate).toLocaleDateString()}
+                            Version {component.version} • Released {new Date(component.release_date).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
@@ -166,15 +166,15 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ result, onReset }) => {
                     <div className="flex items-center space-x-4">
                       <div className="text-right">
                         <div className="font-mono font-bold text-lg">
-                          {component.ageYears.toFixed(1)} years
+                          {component.age_years.toFixed(1)} years
                         </div>
                         <div className="text-xs text-gray-400">
                           Weight: {component.weight.toFixed(1)}
                         </div>
                       </div>
                       
-                      <div className={`px-3 py-1 rounded-full text-xs font-mono font-semibold border ${getRiskColor(component.riskLevel)}`}>
-                        {component.riskLevel.toUpperCase()}
+                      <div className={`px-3 py-1 rounded-full text-xs font-mono font-semibold border ${getRiskColor(component.risk_level)}`}>
+                        {component.risk_level.toUpperCase()}
                       </div>
                     </div>
                   </div>

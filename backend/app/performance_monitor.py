@@ -336,27 +336,27 @@ performance_monitor = PerformanceMonitor(max_metrics_per_operation=1000)
 
 
 # Convenience functions
-async def track_website_analysis(metadata: Optional[Dict[str, Any]] = None):
+def track_website_analysis(metadata: Optional[Dict[str, Any]] = None):
     """Context manager for tracking website analysis performance."""
     return performance_monitor.track_operation("website_analysis", metadata)
 
 
-async def track_github_analysis(metadata: Optional[Dict[str, Any]] = None):
+def track_github_analysis(metadata: Optional[Dict[str, Any]] = None):
     """Context manager for tracking GitHub analysis performance."""
     return performance_monitor.track_operation("github_analysis", metadata)
 
 
-async def track_database_query(metadata: Optional[Dict[str, Any]] = None):
+def track_database_query(metadata: Optional[Dict[str, Any]] = None):
     """Context manager for tracking database query performance."""
     return performance_monitor.track_operation("database_query", metadata)
 
 
-async def track_component_detection(metadata: Optional[Dict[str, Any]] = None):
+def track_component_detection(metadata: Optional[Dict[str, Any]] = None):
     """Context manager for tracking component detection performance."""
     return performance_monitor.track_operation("component_detection", metadata)
 
 
-async def track_age_calculation(metadata: Optional[Dict[str, Any]] = None):
+def track_age_calculation(metadata: Optional[Dict[str, Any]] = None):
     """Context manager for tracking age calculation performance."""
     return performance_monitor.track_operation("age_calculation", metadata)
 

@@ -38,7 +38,7 @@ const HomePage: React.FC = () => {
       // Make API request
       const analysisResult = await StackDebtAPI.analyzeInfrastructure({
         url: normalizedUrl,
-        analysisType: validation.type!
+        analysis_type: validation.type!
       });
 
       setResult(analysisResult);
